@@ -28,59 +28,36 @@ impl Game {
         self.snake.handle_key_press(key_code)
     }
 
-    pub fn is_valid(&self, (x, y): Position) -> bool {
-        x < self.width && y < self.height
-    }
-
     pub fn tick(&mut self) {
-        if self.finished && self.snake.positions.len() == 0 {
+        if self.finished {
             return;
         }
 
-        self.snake.handle_tick();
+        let new_position = self.snake.get_next_position().unwrap();
 
-        let (x, y) = self.snake.positions[0];
-        let new_head = match &self.snake.heading {
-            Direction::Up => (x, y - 1),
-            Direction::Right => (x + 1, y),
-            Direction::Down => (x, y + 1),
-            Direction::Left => (x - 1, y),
-        };
-
-        if !self.is_valid(new_head) || self.snake.positions.contains(&new_head) {
+        if !self.is_valid(new_position) || self.snake.positions.contains(&new_position) {
             self.finished = true;
-        } else {
-            if new_head != self.food {
-                self.snake.positions.pop_back();
-            } else {
-                let free_positions = self.get_free_positions();
+            return;
+        }
 
-                if free_positions.is_empty() {
-                    self.finished = true;
-                    return;
-                }
+        let ate_food = new_position == self.food;
 
-                self.food = free_positions[random_range(0, free_positions.len())];
-            }
+        self.snake.add_new_head(new_position, !ate_food);
 
-            self.snake.positions.push_front(new_head);
+        if ate_food {
+            let available_positions = self.get_available_positions();
+            self.food = available_positions[random_range(0, available_positions.len())];
         }
     }
 
-    fn get_free_positions(&self) -> Vec<Position> {
+    fn is_valid(&self, (x, y): Position) -> bool {
+        x < self.width && y < self.height
+    }
+
+    fn get_available_positions(&self) -> Vec<Position> {
         (0..self.height)
             .flat_map(|y| (0..self.width).map(move |x| (x, y)))
-            .filter(|pos| !self.snake.positions.contains(pos))
+            .filter(|pos| !self.snake.positions.contains(pos) && self.food != *pos)
             .collect::<Vec<Position>>()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::Game;
-
-    #[test]
-    fn test() {
-        println!("{:?}", Game::new(10));
     }
 }

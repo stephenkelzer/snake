@@ -5,8 +5,8 @@ use crate::{direction::Direction, position::Position};
 #[derive(Debug)]
 pub struct Snake {
     pub positions: VecDeque<Position>, // head is first item, tail is last item inside of vector
-    pub heading: Direction,
-    pub next_heading: Direction,
+    heading: Direction,
+    next_heading: Direction,
 }
 
 impl Snake {
@@ -20,10 +20,10 @@ impl Snake {
 
     pub fn handle_key_press(&mut self, key_code: String) {
         let requested_direction = match &key_code[..] {
-            "ArrowUp" | "W" => Some(Direction::Up),
-            "ArrowRight" | "D" => Some(Direction::Right),
-            "ArrowDown" | "S" => Some(Direction::Down),
-            "ArrowLeft" | "A" => Some(Direction::Left),
+            "ArrowUp" | "w" => Some(Direction::Up),
+            "ArrowRight" | "d" => Some(Direction::Right),
+            "ArrowDown" | "s" => Some(Direction::Down),
+            "ArrowLeft" | "a" => Some(Direction::Left),
             _ => None,
         };
 
@@ -49,8 +49,32 @@ impl Snake {
         }
     }
 
-    pub fn handle_tick(&mut self) {
+    pub fn get_next_position(&mut self) -> Result<Position, String> {
         self.heading = self.next_heading;
+
+        let current_head = self.positions.front();
+        if current_head.is_none() {
+            return Err("Snake has no head!".into());
+        }
+
+        let (x, y) = *current_head.unwrap();
+
+        let new_head: Position = match &self.heading {
+            Direction::Up => (x, y - 1),
+            Direction::Right => (x + 1, y),
+            Direction::Down => (x, y + 1),
+            Direction::Left => (x - 1, y),
+        };
+
+        return Ok(new_head);
+    }
+
+    pub fn add_new_head(&mut self, new_head: Position, drop_tail: bool) {
+        self.positions.push_front(new_head);
+
+        if drop_tail {
+            self.positions.pop_back();
+        }
     }
 }
 

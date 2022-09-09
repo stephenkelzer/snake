@@ -24,7 +24,9 @@ thread_local! {
     static HANDLE_KEYDOWN: Closure<dyn FnMut(KeyboardEvent)> = Closure::wrap(Box::new({
         |event: KeyboardEvent| {
             GAME.with(|game| {
-                game.borrow_mut().handle_key_press(event.key());
+                let key_code = event.key();
+                console::log_1(&format!("key pressed: {}", key_code).into());
+                game.borrow_mut().handle_key_press(key_code);
             });
         }
     }) as Box<dyn FnMut(KeyboardEvent)>)
@@ -53,8 +55,6 @@ pub fn main() {
             )
             .unwrap_throw();
     });
-
-    render();
 }
 
 pub fn render() {
@@ -70,9 +70,9 @@ pub fn render() {
             .unwrap_throw();
 
         root_container.set_inner_html("");
-
-        let width = game.width;
-        let height = game.height;
+        root_container
+            .set_attribute("test", "hello world")
+            .unwrap_throw();
 
         if game.finished {
             let game_over_container = document
@@ -101,14 +101,17 @@ pub fn render() {
             .style()
             .set_property(
                 "grid-template",
-                &format!("repeat({}, auto) / repeat({}, auto)", width, height),
+                &format!(
+                    "repeat({}, auto) / repeat({}, auto)",
+                    game.width, game.height
+                ),
             )
             .unwrap_throw();
 
         root_container.append_child(&game_container).unwrap_throw();
 
-        for y in 0..height {
-            for x in 0..width {
+        for y in 0..game.height {
+            for x in 0..game.width {
                 let pos = (x, y);
                 let field_element = document
                     .create_element("div")
