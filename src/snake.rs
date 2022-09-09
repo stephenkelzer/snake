@@ -1,10 +1,11 @@
 use std::collections::VecDeque;
 
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::UnwrapThrowExt;
 
 use crate::{collidable::Collidable, direction::Direction, position::Position};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Snake {
     positions: VecDeque<Position>, // head is first item, tail is last item inside of vector
     heading: Direction,

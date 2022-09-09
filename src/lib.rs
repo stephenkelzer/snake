@@ -14,7 +14,7 @@ use wasm_bindgen::{prelude::*, JsCast, UnwrapThrowExt};
 use web_sys::{console, window, HtmlDivElement, HtmlElement, KeyboardEvent};
 
 thread_local! {
-    static GAME: Rc<RefCell<Game>> = Rc::new(RefCell::new(Game::new(15)));
+    static GAME: Rc<RefCell<Game>> = Rc::new(RefCell::new(Game::new(20)));
 
     static HANDLE_TICK: Closure<dyn FnMut()> = Closure::wrap(Box::new({
         || {
@@ -72,9 +72,10 @@ pub fn render() {
             .unwrap_throw();
 
         root_container.set_inner_html("");
-        root_container
-            .set_attribute("test", "hello world")
-            .unwrap_throw();
+
+        let json = game.serialize_to_json();
+
+        root_container.set_attribute("test", &json).unwrap_throw();
 
         if game.finished {
             let game_over_container = document

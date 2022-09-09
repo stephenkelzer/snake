@@ -3,8 +3,9 @@ use rand::Rng;
 use crate::{
     collidable::Collidable, direction::Direction, food::Food, position::Position, snake::Snake,
 };
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Game {
     pub size: usize,
     pub snake: Snake,
@@ -71,5 +72,9 @@ impl Game {
 
         let available_positions = self.get_available_positions();
         available_positions[rand::thread_rng().gen_range(0..(available_positions.len() + 1))]
+    }
+
+    pub fn serialize_to_json(&self) -> String {
+        serde_json::to_string(self).unwrap() //TODO: check into error handling here
     }
 }
