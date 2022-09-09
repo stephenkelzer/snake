@@ -1,107 +1,119 @@
-use crate::random::random_range;
 use std::collections::VecDeque;
 
-pub type Position = (usize, usize);
-
-#[derive(Debug, Clone, Copy)]
-pub enum Direction {
-    Up,
-    Right,
-    Down,
-    Left,
-}
+use crate::{direction::Direction, position::Position};
 
 #[derive(Debug)]
-pub struct SnakeGame {
-    pub width: usize,
-    pub height: usize,
-    pub snake: VecDeque<Position>, // head is first item, tail is last item inside of vector
-    pub food: Position,
-    direction: Direction,
-    next_direction: Direction,
-    finished: bool,
+pub struct Snake {
+    pub positions: VecDeque<Position>, // head is first item, tail is last item inside of vector
+    pub heading: Direction,
+    pub next_heading: Direction,
 }
 
-impl SnakeGame {
-    pub fn new(size: usize) -> Self {
+impl Snake {
+    pub fn new(starting_position: Position, starting_direction: Direction) -> Self {
         Self {
-            width: size,
-            height: size,
-            snake: [((size - 3).max(0), size / 2)].into_iter().collect(),
-            direction: Direction::Left,
-            next_direction: Direction::Left,
-            food: (2.min(size - 1), size / 2),
-            finished: false,
+            heading: starting_direction,
+            next_heading: starting_direction,
+            positions: [starting_position].into_iter().collect(),
         }
     }
 
-    pub fn change_direction(&mut self, direction: Direction) {
-        if self.finished {
-            return;
-        }
-
-        match (&self.direction, direction) {
-            (Direction::Up, Direction::Up)
-            | (Direction::Up, Direction::Down)
-            | (Direction::Right, Direction::Right)
-            | (Direction::Right, Direction::Left)
-            | (Direction::Down, Direction::Up)
-            | (Direction::Down, Direction::Down)
-            | (Direction::Left, Direction::Right)
-            | (Direction::Left, Direction::Left) => {}
-            (_, direction) => self.next_direction = direction,
-        }
-    }
-
-    pub fn is_valid(&self, (x, y): Position) -> bool {
-        x < self.width && y < self.height
-    }
-
-    pub fn tick(&mut self) {
-        if self.finished && self.snake.len() == 0 {
-            return;
-        }
-
-        self.direction = self.next_direction;
-
-        let (x, y) = self.snake[0];
-        let new_head = match &self.direction {
-            Direction::Up => (x, y - 1),
-            Direction::Right => (x + 1, y),
-            Direction::Down => (x, y + 1),
-            Direction::Left => (x - 1, y),
+    pub fn handle_key_press(&mut self, key_code: String) {
+        let requested_direction = match &key_code[..] {
+            "ArrowUp" | "W" => Some(Direction::Up),
+            "ArrowRight" | "D" => Some(Direction::Right),
+            "ArrowDown" | "S" => Some(Direction::Down),
+            "ArrowLeft" | "A" => Some(Direction::Left),
+            _ => None,
         };
 
-        if !self.is_valid(new_head) || self.snake.contains(&new_head) {
-            self.finished = true;
-        } else {
-            if new_head != self.food {
-                self.snake.pop_back();
-            } else {
-                let free_positions = (9..self.height)
-                    .flat_map(|y| (0..self.width).map(move |x| (x, y)))
-                    .filter(|pos| !self.snake.contains(pos))
-                    .collect::<Vec<_>>();
-
-                if free_positions.is_empty() {
-                    self.finished = true;
-                    return;
+        if let Some(direction) = requested_direction {
+            let next_direction = match (&self.heading, direction) {
+                (Direction::Up, Direction::Up)
+                | (Direction::Up, Direction::Down)
+                | (Direction::Right, Direction::Right)
+                | (Direction::Right, Direction::Left)
+                | (Direction::Down, Direction::Up)
+                | (Direction::Down, Direction::Down)
+                | (Direction::Left, Direction::Right)
+                | (Direction::Left, Direction::Left) => {
+                    // ignore these options as they're invalid movements
+                    None
                 }
+                (_, direction) => Some(direction),
+            };
 
-                self.food = free_positions[random_range(0, free_positions.len())];
+            if let Some(next_direction) = next_direction {
+                self.next_heading = next_direction
             }
-
-            self.snake.push_front(new_head);
         }
+    }
+
+    pub fn handle_tick(&mut self) {
+        self.heading = self.next_heading;
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::SnakeGame;
+    use crate::{direction::Direction, snake::Snake};
 
     #[test]
-    fn test() {
-        println!("{:?}", SnakeGame::new(10));
+    fn construct_new_instance() {
+        println!("{:?}", Snake::new((3, 3), Direction::Left));
+    }
+
+    #[test]
+    fn handle_key_press_arrow_up_goes_up() {
+        let mut snake = Snake::new((3, 3), Direction::Left);
+
+        snake.handle_key_press(String::from("ArrowUp"));
+
+        assert_eq!(snake.next_heading, Direction::Up);
+    }
+
+    #[test]
+    fn handle_key_press_w_goes_up() {
+        let mut snake = Snake::new((3, 3), Direction::Left);
+
+        snake.handle_key_press(String::from("W"));
+
+        assert_eq!(snake.next_heading, Direction::Up);
+    }
+
+    #[test]
+    fn handle_key_press_arrow_down_goes_down() {
+        let mut snake = Snake::new((3, 3), Direction::Left);
+
+        snake.handle_key_press(String::from("ArrowDown"));
+
+        assert_eq!(snake.next_heading, Direction::Down);
+    }
+
+    #[test]
+    fn handle_key_press_s_goes_down() {
+        let mut snake = Snake::new((3, 3), Direction::Left);
+
+        snake.handle_key_press(String::from("S"));
+
+        assert_eq!(snake.next_heading, Direction::Down);
+    }
+
+    #[test]
+    fn handle_key_press_arrow_right_does_nothing() {
+        let mut snake = Snake::new((3, 3), Direction::Left);
+
+        snake.handle_key_press(String::from("ArrowRight"));
+
+        assert_eq!(snake.next_heading, Direction::Left);
+    }
+
+    #[test]
+    fn handle_key_press_d_does_nothing() {
+        let mut snake = Snake::new((3, 3), Direction::Left);
+
+        snake.handle_key_press(String::from("D"));
+
+        assert_eq!(snake.next_heading, Direction::Left);
     }
 }

@@ -1,17 +1,18 @@
+mod direction;
+mod game;
+mod position;
 mod random;
 mod snake;
 
 use std::{cell::RefCell, rc::Rc};
 
+use game::Game;
 use js_sys::Function;
-use snake::SnakeGame;
 use wasm_bindgen::{prelude::*, JsCast, UnwrapThrowExt};
 use web_sys::{console, window, HtmlDivElement, HtmlElement, KeyboardEvent};
 
-use crate::snake::Direction;
-
 thread_local! {
-    static GAME: Rc<RefCell<SnakeGame>> = Rc::new(RefCell::new(SnakeGame::new(15)));
+    static GAME: Rc<RefCell<Game>> = Rc::new(RefCell::new(Game::new(15)));
 
     static HANDLE_TICK: Closure<dyn FnMut()> = Closure::wrap(Box::new({
         let game = GAME.with(|game| game.clone());
@@ -23,19 +24,11 @@ thread_local! {
       }) as Box<dyn FnMut()>);
 
     static HANDLE_KEYDOWN: Closure<dyn FnMut(KeyboardEvent)> = Closure::wrap(Box::new({
-        |evt: KeyboardEvent| {
-            GAME.with(|game| {
-                let direction = match &evt.key()[..] {
-                    "ArrowUp" => Some(Direction::Up),
-                    "ArrowRight" => Some(Direction::Right),
-                    "ArrowDown" => Some(Direction::Down),
-                    "ArrowLeft" => Some(Direction::Left),
-                    _ => None
-                };
+        |event: KeyboardEvent| {
+            let key_code = event.key();
 
-                if let Some(direction) = direction {
-                    game.borrow_mut().change_direction(direction);
-                }
+            GAME.with(|game| {
+                game.borrow_mut().snake.handle_key_press(key_code);
             });
         }
     }) as Box<dyn FnMut(KeyboardEvent)>)
@@ -111,9 +104,9 @@ pub fn render() {
                 field_element.set_inner_text({
                     if pos == game.food {
                         "🍎"
-                    } else if game.snake.get(0) == Some(&pos) {
+                    } else if game.snake.positions.get(0) == Some(&pos) {
                         "❇️"
-                    } else if game.snake.contains(&pos) {
+                    } else if game.snake.positions.contains(&pos) {
                         "🟩"
                     } else {
                         " "
