@@ -16,10 +16,10 @@ pub struct SnakeGame {
     pub width: usize,
     pub height: usize,
     pub snake: VecDeque<Position>, // head is first item, tail is last item inside of vector
-    pub direction: Direction,
-    next_direction: Direction,
     pub food: Position,
-    pub finished: bool,
+    direction: Direction,
+    next_direction: Direction,
+    finished: bool,
 }
 
 impl SnakeGame {
