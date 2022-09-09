@@ -1,10 +1,12 @@
 use std::collections::VecDeque;
 
-use crate::{direction::Direction, position::Position};
+use wasm_bindgen::UnwrapThrowExt;
+
+use crate::{collidable::Collidable, direction::Direction, position::Position};
 
 #[derive(Debug)]
 pub struct Snake {
-    pub positions: VecDeque<Position>, // head is first item, tail is last item inside of vector
+    positions: VecDeque<Position>, // head is first item, tail is last item inside of vector
     heading: Direction,
     next_heading: Direction,
 }
@@ -49,24 +51,17 @@ impl Snake {
         }
     }
 
-    pub fn get_next_position(&mut self) -> Result<Position, String> {
-        self.heading = self.next_heading;
+    pub fn get_next_position(&mut self) -> Position {
+        self.heading = self.next_heading; //TODO: should this be here? or in the actual "commit movement" step?
 
-        let current_head = self.positions.front();
-        if current_head.is_none() {
-            return Err("Snake has no head!".into());
-        }
+        let (x, y) = *self.positions.front().unwrap_throw();
 
-        let (x, y) = *current_head.unwrap();
-
-        let new_head: Position = match &self.heading {
+        match &self.heading {
             Direction::Up => (x, y - 1),
             Direction::Right => (x + 1, y),
             Direction::Down => (x, y + 1),
             Direction::Left => (x - 1, y),
-        };
-
-        return Ok(new_head);
+        }
     }
 
     pub fn add_new_head(&mut self, new_head: Position, drop_tail: bool) {
@@ -75,6 +70,20 @@ impl Snake {
         if drop_tail {
             self.positions.pop_back();
         }
+    }
+
+    pub fn is_head_position(&self, position: Position) -> bool {
+        if self.positions.len() < 1 {
+            return false;
+        }
+
+        return self.positions[0] == position;
+    }
+}
+
+impl Collidable for Snake {
+    fn check_for_collision(&self, position: &Position) -> bool {
+        self.positions.contains(position)
     }
 }
 

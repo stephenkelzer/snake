@@ -1,4 +1,6 @@
+mod collidable;
 mod direction;
+mod food;
 mod game;
 mod position;
 mod random;
@@ -6,6 +8,7 @@ mod snake;
 
 use std::{cell::RefCell, rc::Rc};
 
+use collidable::Collidable;
 use game::Game;
 use js_sys::Function;
 use wasm_bindgen::{prelude::*, JsCast, UnwrapThrowExt};
@@ -122,11 +125,11 @@ pub fn render() {
                 field_element.set_class_name("field");
 
                 field_element.set_inner_text({
-                    if pos == game.food {
+                    if game.food.check_for_collision(&pos) {
                         "🍎"
-                    } else if game.snake.positions.get(0) == Some(&pos) {
+                    } else if game.snake.is_head_position(pos) {
                         "❇️"
-                    } else if game.snake.positions.contains(&pos) {
+                    } else if game.snake.check_for_collision(&pos) {
                         "🟩"
                     } else {
                         " "
