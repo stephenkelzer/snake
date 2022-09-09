@@ -6,7 +6,7 @@ pub struct Game {
     pub height: usize,
     pub snake: Snake,
     pub food: Position,
-    finished: bool,
+    pub finished: bool,
 }
 
 impl Game {
@@ -18,6 +18,14 @@ impl Game {
             food: (2.min(size - 1), size / 2),
             finished: false,
         }
+    }
+
+    pub fn handle_key_press(&mut self, key_code: String) {
+        if self.finished {
+            return;
+        }
+
+        self.snake.handle_key_press(key_code)
     }
 
     pub fn is_valid(&self, (x, y): Position) -> bool {

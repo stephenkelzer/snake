@@ -15,20 +15,16 @@ thread_local! {
     static GAME: Rc<RefCell<Game>> = Rc::new(RefCell::new(Game::new(15)));
 
     static HANDLE_TICK: Closure<dyn FnMut()> = Closure::wrap(Box::new({
-        let game = GAME.with(|game| game.clone());
-
-        move || {
-            game.borrow_mut().tick();
+        || {
+            GAME.with(|game| game.borrow_mut().tick());
             render();
         }
       }) as Box<dyn FnMut()>);
 
     static HANDLE_KEYDOWN: Closure<dyn FnMut(KeyboardEvent)> = Closure::wrap(Box::new({
         |event: KeyboardEvent| {
-            let key_code = event.key();
-
             GAME.with(|game| {
-                game.borrow_mut().snake.handle_key_press(key_code);
+                game.borrow_mut().handle_key_press(event.key());
             });
         }
     }) as Box<dyn FnMut(KeyboardEvent)>)
@@ -78,17 +74,38 @@ pub fn render() {
         let width = game.width;
         let height = game.height;
 
-        root_container
-            .style()
-            .set_property("display", "inline-grid")
+        if game.finished {
+            let game_over_container = document
+                .create_element("div")
+                .unwrap_throw()
+                .dyn_into::<HtmlDivElement>()
+                .unwrap_throw();
+
+            game_over_container.set_inner_text("Game Over!");
+
+            root_container
+                .append_child(&game_over_container)
+                .unwrap_throw();
+            return;
+        }
+
+        let game_container = document
+            .create_element("div")
+            .unwrap_throw()
+            .dyn_into::<HtmlDivElement>()
             .unwrap_throw();
-        root_container
+
+        game_container.set_id("game-container");
+
+        game_container
             .style()
             .set_property(
                 "grid-template",
                 &format!("repeat({}, auto) / repeat({}, auto)", width, height),
             )
             .unwrap_throw();
+
+        root_container.append_child(&game_container).unwrap_throw();
 
         for y in 0..height {
             for x in 0..width {
@@ -113,7 +130,7 @@ pub fn render() {
                     }
                 });
 
-                root_container.append_child(&field_element).unwrap_throw();
+                game_container.append_child(&field_element).unwrap_throw();
             }
         }
     })
