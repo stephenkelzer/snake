@@ -3,7 +3,6 @@ mod direction;
 mod food;
 mod game;
 mod position;
-mod random;
 mod snake;
 
 use std::{cell::RefCell, rc::Rc};
@@ -19,7 +18,7 @@ thread_local! {
 
     static HANDLE_TICK: Closure<dyn FnMut()> = Closure::wrap(Box::new({
         || {
-            GAME.with(|game| game.borrow_mut().tick());
+            GAME.with(|game| game.borrow_mut().handle_tick());
             render();
         }
       }) as Box<dyn FnMut()>);
@@ -104,17 +103,14 @@ pub fn render() {
             .style()
             .set_property(
                 "grid-template",
-                &format!(
-                    "repeat({}, auto) / repeat({}, auto)",
-                    game.width, game.height
-                ),
+                &format!("repeat({}, auto) / repeat({}, auto)", game.size, game.size),
             )
             .unwrap_throw();
 
         root_container.append_child(&game_container).unwrap_throw();
 
-        for y in 0..game.height {
-            for x in 0..game.width {
+        for y in 0..game.size {
+            for x in 0..game.size {
                 let pos = (x, y);
                 let field_element = document
                     .create_element("div")

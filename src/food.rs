@@ -8,9 +8,9 @@ pub struct Food {
 }
 
 impl Food {
-    pub fn new(starting_position: Position) -> Self {
+    pub fn new(position: Position) -> Self {
         Self {
-            positions: [starting_position].into_iter().collect(),
+            positions: [position].into_iter().collect(),
         }
     }
 }

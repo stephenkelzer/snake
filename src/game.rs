@@ -1,12 +1,12 @@
+use rand::Rng;
+
 use crate::{
-    collidable::Collidable, direction::Direction, food::Food, position::Position,
-    random::random_range, snake::Snake,
+    collidable::Collidable, direction::Direction, food::Food, position::Position, snake::Snake,
 };
 
 #[derive(Debug)]
 pub struct Game {
-    pub width: usize,
-    pub height: usize,
+    pub size: usize,
     pub snake: Snake,
     pub food: Food,
     pub finished: bool,
@@ -15,8 +15,7 @@ pub struct Game {
 impl Game {
     pub fn new(size: usize) -> Self {
         Self {
-            width: size,
-            height: size,
+            size,
             snake: Snake::new(((size - 3).max(0), size / 2), Direction::Left),
             food: Food::new((2.min(size - 1), size / 2)),
             finished: false,
@@ -31,16 +30,14 @@ impl Game {
         self.snake.handle_key_press(key_code)
     }
 
-    pub fn tick(&mut self) {
+    pub fn handle_tick(&mut self) {
         if self.finished {
             return;
         }
 
         let new_position = self.snake.get_next_position();
 
-        let collides_with_snake = self.snake.check_for_collision(&new_position);
-
-        if collides_with_snake || !self.is_valid(new_position) {
+        if self.snake.check_for_collision(&new_position) || self.is_out_of_bounds(new_position) {
             self.finished = true;
             return;
         }
@@ -50,21 +47,29 @@ impl Game {
         self.snake.add_new_head(new_position, !collides_with_food);
 
         if collides_with_food {
-            let available_positions = self.get_available_positions();
-            self.food = Food::new(available_positions[random_range(0, available_positions.len())]);
+            self.food = Food::new(self.get_random_available_position());
         }
     }
 
-    fn is_valid(&self, (x, y): Position) -> bool {
-        x < self.width && y < self.height
+    fn is_out_of_bounds(&self, position: Position) -> bool {
+        let (x, y) = position;
+        x > self.size || y > self.size
     }
 
     fn get_available_positions(&self) -> Vec<Position> {
-        (0..self.height)
-            .flat_map(|y| (0..self.width).map(move |x| (x, y)))
+        (0..self.size)
+            .flat_map(|y| (0..self.size).map(move |x| (x, y)))
             .filter(|pos| {
                 !self.snake.check_for_collision(&pos) && !self.food.check_for_collision(&pos)
             })
             .collect::<Vec<Position>>()
+    }
+
+    fn get_random_available_position(&self) -> Position {
+        // let available_positions = self.get_available_positions();
+        // available_positions[random_range(0, available_positions.len())]
+
+        let available_positions = self.get_available_positions();
+        available_positions[rand::thread_rng().gen_range(0..(available_positions.len() + 1))]
     }
 }
