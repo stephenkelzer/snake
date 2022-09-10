@@ -16,7 +16,8 @@ jobs:
 
     steps:
 
-      - uses: release-drafter/release-drafter@v5
+      - name: Draft Release
+        uses: release-drafter/release-drafter@v5
+        config-name: release-drafter-template.yml
         env:
-          config-name: release-drafter-template.yml
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
