@@ -1,0 +1,28 @@
+name: Deploy to GitHub Pages
+
+on:
+  workflow_dispatch:
+  release:
+    tags:
+      - '*'
+    types: 
+      - published
+
+jobs:
+  deploy-to-github-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install wasm-pack
+        run: cargo install wasm-pack
+
+      - name: Compile WebAssembly Package
+        run: wasm-pack build --target web
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4.2.5
+        with:
+          branch: gh-pages
+          folder: .
