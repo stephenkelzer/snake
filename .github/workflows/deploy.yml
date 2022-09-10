@@ -8,6 +8,9 @@ on:
     types: 
       - published
 
+env:
+  CARGO_TERM_COLOR: always
+
 permissions:
   contents: read
   pages: write
@@ -18,23 +21,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  
-  deploy-to-github-pages:
+
+  build-artifact:
 
     runs-on: ubuntu-latest
 
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
 
       - name: Install wasm-pack
         uses: jetli/wasm-pack-action@v0.3.0
         with:
           version: 'latest'
+
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Compile WebAssembly Package
         run: wasm-pack build --target web
@@ -46,6 +46,18 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           path: '.'
+  
+  deploy-to-github-pages:
+
+    needs: build-artifact
+
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
 
       - name: Deploy to GitHub Pages
         id: deployment
