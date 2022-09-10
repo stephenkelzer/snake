@@ -1,6 +1,10 @@
 # snake
 Welcome to my first app written in Rust!
 
+[GitHub Page Demo](https://stephenkelzer.github.io/snake)
+
+---
+
 ## Prerequisites:
 - Install [`Rust`](https://www.rust-lang.org/tools/install)
    ```
@@ -18,6 +22,8 @@ Welcome to my first app written in Rust!
    ```
    cargo install sfz
    ```
+
+---
 
 ## To run locally:
 ```bash

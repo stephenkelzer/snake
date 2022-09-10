@@ -21,6 +21,9 @@ jobs:
       - name: Compile WebAssembly Package
         run: wasm-pack build --target web
 
+      - name: List directory contents
+        run: ls -la
+
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.2.5
         with:
