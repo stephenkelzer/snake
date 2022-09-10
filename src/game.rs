@@ -1,16 +1,36 @@
 use rand::Rng;
+use wasm_react::{c, h, Component};
 
 use crate::{
-    collidable::Collidable, direction::Direction, food::Food, position::Position, snake::Snake,
+    cell::Cell, collidable::Collidable, direction::Direction, food::Food, position::Position,
+    snake::Snake,
 };
-use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct Game {
     pub size: usize,
     pub snake: Snake,
     pub food: Food,
-    pub finished: bool,
+    pub finished: bool, //TODO: move to 'state' and add a "paused" state
+}
+
+impl Component for Game {
+    fn render(&self) -> wasm_react::VNode {
+        let width = self.size;
+        let height = self.size;
+
+        let rows = (0..height).map(|y| {
+            let columns = (0..width).map(move |x| {
+                h!(div)
+                    .class_name("cell")
+                    .build(c![self.get_cell((x, y)).unwrap().render()])
+            });
+
+            h!(div).class_name("row").build(c![..columns])
+        });
+
+        h!(div).id("game").build(c![..rows])
+    }
 }
 
 impl Game {
@@ -52,6 +72,19 @@ impl Game {
         }
     }
 
+    fn get_cell(&self, position: Position) -> Option<Cell> {
+        if self.is_out_of_bounds(position) {
+            return None;
+        }
+
+        Some(match position {
+            (x, y) if self.snake.is_head_position((x, y)) => Cell::SnakeHead,
+            (x, y) if self.snake.check_for_collision(&(x, y)) => Cell::SnakeBody,
+            (x, y) if self.food.check_for_collision(&(x, y)) => Cell::Food,
+            _ => Cell::Empty,
+        })
+    }
+
     fn is_out_of_bounds(&self, position: Position) -> bool {
         let (x, y) = position;
         x > self.size || y > self.size
@@ -67,14 +100,7 @@ impl Game {
     }
 
     fn get_random_available_position(&self) -> Position {
-        // let available_positions = self.get_available_positions();
-        // available_positions[random_range(0, available_positions.len())]
-
         let available_positions = self.get_available_positions();
         available_positions[rand::thread_rng().gen_range(0..(available_positions.len() + 1))]
-    }
-
-    pub fn serialize_to_json(&self) -> String {
-        serde_json::to_string(self).unwrap() //TODO: check into error handling here
     }
 }

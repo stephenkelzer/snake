@@ -6,22 +6,34 @@
         <title>Snake</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css" rel="stylesheet" />
+        
         <style>
             html {
-                font-size: 200%;
-                text-align: center;
+                font-size: 3rem;
             }
 
-            #game-container {
-                display: inline-grid;
+            #app {
+                display: flex;
+                justify-content: center;
+                margin-top: 1rem;
+            }
+
+            #game {
+                display: flex;
+                flex-direction: column;
                 border: 1px solid gray;
             }
 
-            .field {
+            .row {
+                display: flex;
+            }
+
+            .cell {
+                display: flex;
                 width: 1rem;
                 height: 1rem;
-                line-height: 1rem;
-                text-indent:  -0.2rem;
+                justify-content: center;
             }
         </style>
     </head>
@@ -29,13 +41,15 @@
         <div id="root"></div>
 
         <script type="module">
-            import init from "./pkg/snake.js";
-      
-            async function main() {
-              await init();
-            }
-      
-            main();
+            import "https://unpkg.com/react/umd/react.production.min.js";
+            import "https://unpkg.com/react-dom/umd/react-dom.production.min.js";
+            import init, { WasmReact, App } from "./pkg/snake.js";
+
+            await init(); // Need to load WASM first
+            WasmReact.useReact(window.React); // Tell wasm-react to use your React runtime
+
+            const root = ReactDOM.createRoot(document.getElementById("root"));
+            root.render(React.createElement(App, {}));
         </script>
     </body>
 </html>

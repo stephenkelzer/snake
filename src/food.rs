@@ -1,10 +1,8 @@
 use std::collections::VecDeque;
 
-use serde::{Deserialize, Serialize};
-
 use crate::{collidable::Collidable, position::Position};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct Food {
     positions: VecDeque<Position>,
 }

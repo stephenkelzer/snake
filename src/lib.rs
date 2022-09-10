@@ -1,3 +1,14 @@
+use game::Game;
+use js_sys::Function;
+use wasm_bindgen::{prelude::Closure, JsCast, JsValue, UnwrapThrowExt};
+use wasm_react::{
+    c, export_components, h,
+    hooks::{use_callback, use_effect, use_js_ref, use_state, Deps},
+    Component,
+};
+use web_sys::{console, window, Element, HtmlElement, KeyboardEvent};
+
+mod cell;
 mod collidable;
 mod direction;
 mod food;
@@ -5,136 +16,100 @@ mod game;
 mod position;
 mod snake;
 
-use std::{cell::RefCell, rc::Rc};
+pub struct App;
 
-use collidable::Collidable;
-use game::Game;
-use js_sys::Function;
-use wasm_bindgen::{prelude::*, JsCast, UnwrapThrowExt};
-use web_sys::{console, window, HtmlDivElement, HtmlElement, KeyboardEvent};
+impl TryFrom<JsValue> for App {
+    type Error = JsValue;
 
-thread_local! {
-    static GAME: Rc<RefCell<Game>> = Rc::new(RefCell::new(Game::new(20)));
-
-    static HANDLE_TICK: Closure<dyn FnMut()> = Closure::wrap(Box::new({
-        || {
-            GAME.with(|game| game.borrow_mut().handle_tick());
-            render();
-        }
-      }) as Box<dyn FnMut()>);
-
-    static HANDLE_KEYDOWN: Closure<dyn FnMut(KeyboardEvent)> = Closure::wrap(Box::new({
-        |event: KeyboardEvent| {
-            GAME.with(|game| {
-                let key_code = event.key();
-                console::log_1(&format!("key pressed: {}", key_code).into());
-                game.borrow_mut().handle_key_press(key_code);
-            });
-        }
-    }) as Box<dyn FnMut(KeyboardEvent)>)
+    fn try_from(_: JsValue) -> Result<Self, Self::Error> {
+        // not sure what to do in here? What is this for?
+        // seems to be getting state back from the JS side of react?
+        Ok(App)
+    }
 }
 
-#[wasm_bindgen(start)]
-pub fn main() {
-    console::log_1(&"Starting...".into());
+impl Component for App {
+    fn render(&self) -> wasm_react::VNode {
+        let game = use_state(|| Game::new(10));
+        let speed = use_state(|| 200);
+        let element_container = use_js_ref::<Element>(None);
 
-    HANDLE_TICK.with(|handle_tick| {
-        window()
-            .unwrap_throw()
-            .set_interval_with_callback_and_timeout_and_arguments_0(
-                handle_tick.as_ref().dyn_ref::<Function>().unwrap_throw(),
-                200,
-            )
-            .unwrap_throw()
-    });
+        use_effect(
+            {
+                // Auto focus our container
 
-    HANDLE_KEYDOWN.with(|handle_keydown| {
-        window()
-            .unwrap_throw()
-            .add_event_listener_with_callback(
-                "keydown",
-                handle_keydown.as_ref().dyn_ref::<Function>().unwrap_throw(),
-            )
-            .unwrap_throw();
-    });
-}
+                let element_container = element_container.clone();
 
-pub fn render() {
-    GAME.with(|game| {
-        let game = game.borrow();
+                move || {
+                    element_container
+                        .current()
+                        .and_then(|element| element.dyn_into::<HtmlElement>().ok())
+                        .map(|element| element.focus().ok());
 
-        let document = window().unwrap_throw().document().unwrap_throw();
+                    || ()
+                }
+            },
+            Deps::none(),
+        );
 
-        let root_container = document
-            .get_element_by_id("root")
-            .unwrap_throw()
-            .dyn_into::<HtmlElement>()
-            .unwrap_throw();
+        use_effect(
+            {
+                let game = game.clone();
+                let speed = *speed.value();
 
-        root_container.set_inner_html("");
+                move || {
+                    let tick_closure = Closure::new({
+                        let mut game = game.clone();
 
-        let json = game.serialize_to_json();
+                        move || {
+                            game.set(|mut game| {
+                                game.handle_tick();
+                                game
+                            });
+                        }
+                    });
 
-        root_container.set_attribute("test", &json).unwrap_throw();
+                    let handle = window()
+                        .unwrap_throw()
+                        .set_interval_with_callback_and_timeout_and_arguments_0(
+                            tick_closure.as_ref().dyn_ref::<Function>().unwrap_throw(),
+                            speed,
+                        )
+                        .unwrap_throw();
 
-        if game.finished {
-            let game_over_container = document
-                .create_element("div")
-                .unwrap_throw()
-                .dyn_into::<HtmlDivElement>()
-                .unwrap_throw();
-
-            game_over_container.set_inner_text("Game Over!");
-
-            root_container
-                .append_child(&game_over_container)
-                .unwrap_throw();
-            return;
-        }
-
-        let game_container = document
-            .create_element("div")
-            .unwrap_throw()
-            .dyn_into::<HtmlDivElement>()
-            .unwrap_throw();
-
-        game_container.set_id("game-container");
-
-        game_container
-            .style()
-            .set_property(
-                "grid-template",
-                &format!("repeat({}, auto) / repeat({}, auto)", game.size, game.size),
-            )
-            .unwrap_throw();
-
-        root_container.append_child(&game_container).unwrap_throw();
-
-        for y in 0..game.size {
-            for x in 0..game.size {
-                let pos = (x, y);
-                let field_element = document
-                    .create_element("div")
-                    .unwrap_throw()
-                    .dyn_into::<HtmlDivElement>()
-                    .unwrap_throw();
-
-                field_element.set_class_name("field");
-
-                field_element.set_inner_text({
-                    if game.food.check_for_collision(&pos) {
-                        "🍎"
-                    } else if game.snake.is_head_position(pos) {
-                        "❇️"
-                    } else if game.snake.check_for_collision(&pos) {
-                        "🟩"
-                    } else {
-                        " "
+                    move || {
+                        drop(tick_closure);
+                        window().unwrap_throw().clear_interval_with_handle(handle);
                     }
-                });
+                }
+            },
+            Deps::some(*speed.value()),
+        );
 
-                game_container.append_child(&field_element).unwrap_throw();
-            }
-        }
-    })
+        let handle_key_down = use_callback(
+            {
+                let mut game = game.clone();
+
+                move |evt: KeyboardEvent| {
+                    let key_code = evt.code();
+                    console::log_1(&format!("key pressed: {}", key_code).into());
+
+                    game.set(|mut game| {
+                        game.handle_key_press(key_code);
+                        game
+                    })
+                }
+            },
+            Deps::none(),
+        );
+
+        h!(div)
+            .id("app")
+            .ref_container(&element_container)
+            .tabindex(0)
+            .on_keydown(&handle_key_down)
+            .build(c![game.value().render()])
+    }
 }
+
+export_components! { App }

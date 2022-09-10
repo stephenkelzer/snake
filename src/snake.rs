@@ -1,11 +1,10 @@
 use std::collections::VecDeque;
 
-use serde::{Deserialize, Serialize};
 use wasm_bindgen::UnwrapThrowExt;
 
 use crate::{collidable::Collidable, direction::Direction, position::Position};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct Snake {
     positions: VecDeque<Position>, // head is first item, tail is last item inside of vector
     heading: Direction,
@@ -23,10 +22,10 @@ impl Snake {
 
     pub fn handle_key_press(&mut self, key_code: String) {
         let requested_direction = match &key_code[..] {
-            "ArrowUp" | "w" => Some(Direction::Up),
-            "ArrowRight" | "d" => Some(Direction::Right),
-            "ArrowDown" | "s" => Some(Direction::Down),
-            "ArrowLeft" | "a" => Some(Direction::Left),
+            "ArrowUp" | "KeyW" => Some(Direction::Up),
+            "ArrowRight" | "KeyD" => Some(Direction::Right),
+            "ArrowDown" | "KeyS" => Some(Direction::Down),
+            "ArrowLeft" | "KeyA" => Some(Direction::Left),
             _ => None,
         };
 
