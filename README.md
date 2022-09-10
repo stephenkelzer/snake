@@ -29,3 +29,11 @@ Welcome to my first app written in Rust!
 ```bash
 cargo cmd run
 ```
+
+## Deployment Process:
+1) Create a pull request pointing at the `main` branch
+1) Merge the pull request
+1) The 'Release Drafter' GitHub Action will create a draft release
+1) Edit the draft release and set it to a published state
+1) The 'Deploy to GitHub Pages' GitHub Action will deploy the app to GitHub Pages
+1) View the deployed app at [https://stephenkelzer.github.io/snake](https://stephenkelzer.github.io/snake)
