@@ -12,9 +12,12 @@ impl Component for GameStatus {
         let (title, subtitle) = match self {
             GameStatus::Playing => (
                 "Playing",
-                "Use the arrow keys (or 'WASD') to move the snake",
+                "Use the arrow keys (or 'WASD') to move the snake.",
             ),
-            GameStatus::Paused => ("Paused", "Click on the game area to resume"),
+            GameStatus::Paused => (
+                "Paused",
+                "Click on the game area or press 'space' to resume",
+            ),
             GameStatus::GameOver => ("Game Over!", "Refresh your browser to play again."),
         };
 
