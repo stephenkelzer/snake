@@ -30,6 +30,8 @@ Welcome to my first app written in Rust!
 cargo cmd run
 ```
 
+---
+
 ## Deployment Process:
 1) Create a pull request pointing at the `main` branch
 1) Merge the pull request
