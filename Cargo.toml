@@ -1,6 +1,6 @@
 [package]
 name = "snake"
-version = "0.0.1"
+version = "0.0.0"            # this get's updated automatically by our deployment GitHub Action
 edition = "2021"
 authors = ["Stephen Kelzer"]
 
