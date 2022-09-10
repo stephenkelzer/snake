@@ -105,56 +105,79 @@ mod tests {
     }
 
     #[test]
-    fn handle_key_press_arrow_up_goes_up() {
-        let mut snake = Snake::new((3, 3), Direction::Left);
+    fn test_keyboard_movement() {
+        test_helper(Direction::Left, ["ArrowUp", "KeyW"].to_vec(), Direction::Up);
+        test_helper(
+            Direction::Left,
+            ["ArrowDown", "KeyS"].to_vec(),
+            Direction::Down,
+        );
+        test_helper(
+            Direction::Left,
+            ["ArrowLeft", "ArrowRight", "KeyA", "KeyD"].to_vec(),
+            Direction::Left,
+        );
 
-        snake.handle_key_press("ArrowUp");
+        test_helper(
+            Direction::Up,
+            ["ArrowRight", "KeyD"].to_vec(),
+            Direction::Right,
+        );
+        test_helper(
+            Direction::Up,
+            ["ArrowLeft", "KeyA"].to_vec(),
+            Direction::Left,
+        );
+        test_helper(
+            Direction::Up,
+            ["ArrowUp", "ArrowDown", "KeyW", "KeyS"].to_vec(),
+            Direction::Up,
+        );
 
-        assert_eq!(snake.next_heading, Direction::Up);
+        test_helper(
+            Direction::Right,
+            ["ArrowUp", "KeyW"].to_vec(),
+            Direction::Up,
+        );
+        test_helper(
+            Direction::Right,
+            ["ArrowDown", "KeyS"].to_vec(),
+            Direction::Down,
+        );
+        test_helper(
+            Direction::Right,
+            ["ArrowLeft", "ArrowRight", "KeyA", "KeyD"].to_vec(),
+            Direction::Right,
+        );
+
+        test_helper(
+            Direction::Down,
+            ["ArrowLeft", "KeyA"].to_vec(),
+            Direction::Left,
+        );
+        test_helper(
+            Direction::Down,
+            ["ArrowRight", "KeyD"].to_vec(),
+            Direction::Right,
+        );
+        test_helper(
+            Direction::Down,
+            ["ArrowUp", "ArrowDown", "KeyW", "KeyS"].to_vec(),
+            Direction::Down,
+        );
     }
 
-    #[test]
-    fn handle_key_press_w_goes_up() {
-        let mut snake = Snake::new((3, 3), Direction::Left);
+    fn test_helper(
+        starting_direction: Direction,
+        test_keys: Vec<&str>,
+        expected_direction: Direction,
+    ) {
+        for test_key in test_keys {
+            let mut snake = Snake::new((3, 3), starting_direction);
 
-        snake.handle_key_press("W");
+            snake.handle_key_press(test_key);
 
-        assert_eq!(snake.next_heading, Direction::Up);
-    }
-
-    #[test]
-    fn handle_key_press_arrow_down_goes_down() {
-        let mut snake = Snake::new((3, 3), Direction::Left);
-
-        snake.handle_key_press("ArrowDown");
-
-        assert_eq!(snake.next_heading, Direction::Down);
-    }
-
-    #[test]
-    fn handle_key_press_s_goes_down() {
-        let mut snake = Snake::new((3, 3), Direction::Left);
-
-        snake.handle_key_press("S");
-
-        assert_eq!(snake.next_heading, Direction::Down);
-    }
-
-    #[test]
-    fn handle_key_press_arrow_right_does_nothing() {
-        let mut snake = Snake::new((3, 3), Direction::Left);
-
-        snake.handle_key_press("ArrowRight");
-
-        assert_eq!(snake.next_heading, Direction::Left);
-    }
-
-    #[test]
-    fn handle_key_press_d_does_nothing() {
-        let mut snake = Snake::new((3, 3), Direction::Left);
-
-        snake.handle_key_press("D");
-
-        assert_eq!(snake.next_heading, Direction::Left);
+            assert_eq!(snake.next_heading, expected_direction,);
+        }
     }
 }
