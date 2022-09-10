@@ -30,6 +30,5 @@ jobs:
       - name: Run tests
         run: cargo test --verbose
 
-      
       - name: Compile WebAssembly Package
         run: wasm-pack build --target web
