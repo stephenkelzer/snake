@@ -18,6 +18,8 @@ mod game_status;
 mod position;
 mod snake;
 
+static CARGO_PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
+
 pub struct App;
 
 impl TryFrom<JsValue> for App {
@@ -135,6 +137,7 @@ impl Component for App {
 
         h!(div)
             .id("app")
+            .attr("app-version", &JsValue::from_str(CARGO_PKG_VERSION))
             .ref_container(&element_container)
             .tabindex(0)
             .on_keydown(&handle_key_down)
