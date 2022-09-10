@@ -13,6 +13,7 @@ mod collidable;
 mod direction;
 mod food;
 mod game;
+mod game_status;
 mod position;
 mod snake;
 
@@ -103,11 +104,41 @@ impl Component for App {
             Deps::none(),
         );
 
+        let handle_focus = use_callback(
+            {
+                let mut game = game.clone();
+
+                move |_| {
+                    game.set(|mut game| {
+                        game.unpause();
+                        game
+                    })
+                }
+            },
+            Deps::none(),
+        );
+
+        let handle_blur = use_callback(
+            {
+                let mut game = game.clone();
+
+                move |_| {
+                    game.set(|mut game| {
+                        game.pause();
+                        game
+                    })
+                }
+            },
+            Deps::none(),
+        );
+
         h!(div)
             .id("app")
             .ref_container(&element_container)
             .tabindex(0)
             .on_keydown(&handle_key_down)
+            .on_focus(&handle_focus)
+            .on_blur(&handle_blur)
             .build(c![game.value().render()])
     }
 }

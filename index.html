@@ -21,10 +21,31 @@
                 outline: none;
             }
 
+            #game-wrapper {}
+
+            #game-status-wrapper {
+                text-align: center;
+                padding: 0.2rem;
+            }
+
+            #game-status-title {
+                font-size: 0.5rem;
+                padding-bottom: 0.2rem;
+            }
+
+            #game-status-subtitle {
+                font-size: 0.4rem;
+                color: gray;
+            }
+
             #game {
                 display: flex;
                 flex-direction: column;
                 border: 1px solid gray;
+            }
+
+            #game.paused {
+                background-color: lightgray;
             }
 
             .row {

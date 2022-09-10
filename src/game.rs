@@ -2,8 +2,8 @@ use rand::Rng;
 use wasm_react::{c, h, Component, VNode};
 
 use crate::{
-    cell::Cell, collidable::Collidable, direction::Direction, food::Food, position::Position,
-    snake::Snake,
+    cell::Cell, collidable::Collidable, direction::Direction, food::Food, game_status::GameStatus,
+    position::Position, snake::Snake,
 };
 
 #[derive(Debug)]
@@ -11,21 +11,21 @@ pub struct Game {
     pub size: usize,
     pub snake: Snake,
     pub food: Food,
-    pub finished: bool, //TODO: move to 'state' and add a "paused" state
+    pub status: GameStatus,
 }
 
 impl Component for Game {
     fn render(&self) -> VNode {
-        let width = self.size;
-        let height = self.size;
-
-        let rows = (0..height).map(|y| {
-            let columns = (0..width).map(move |x| self.get_cell((x, y)).unwrap().render());
+        let rows = (0..self.size).map(|y| {
+            let columns = (0..self.size).map(move |x| self.get_cell((x, y)).unwrap().render());
 
             h!(div).class_name("row").build(c![..columns])
         });
 
-        h!(div).id("game").build(c![..rows])
+        h!(div).id("game-wrapper").build(c![
+            self.status.render(),
+            h!(div).id("game").build(c![..rows])
+        ])
     }
 }
 
@@ -35,12 +35,14 @@ impl Game {
             size,
             snake: Snake::new(((size - 3).max(0), size / 2), Direction::Left),
             food: Food::new((2.min(size - 1), size / 2)),
-            finished: false,
+            status: GameStatus::Paused,
         }
     }
 
     pub fn handle_key_press(&mut self, key_code: String) {
-        if self.finished {
+        // TODO: add space bar event to pause game
+
+        if self.status != GameStatus::Playing {
             return;
         }
 
@@ -48,14 +50,14 @@ impl Game {
     }
 
     pub fn handle_tick(&mut self) {
-        if self.finished {
+        if self.status != GameStatus::Playing {
             return;
         }
 
         let new_position = self.snake.get_next_position();
 
         if self.snake.check_for_collision(&new_position) || self.is_out_of_bounds(new_position) {
-            self.finished = true;
+            self.status = GameStatus::GameOver;
             return;
         }
 
@@ -66,6 +68,20 @@ impl Game {
         if collides_with_food {
             self.food = Food::new(self.get_random_available_position());
         }
+    }
+
+    pub fn pause(&mut self) {
+        if self.status == GameStatus::GameOver {
+            return;
+        }
+        self.status = GameStatus::Paused;
+    }
+
+    pub fn unpause(&mut self) {
+        if self.status == GameStatus::GameOver {
+            return;
+        }
+        self.status = GameStatus::Playing;
     }
 
     fn get_cell(&self, position: Position) -> Option<Cell> {
