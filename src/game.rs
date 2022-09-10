@@ -1,5 +1,5 @@
 use rand::Rng;
-use wasm_react::{c, h, Component};
+use wasm_react::{c, h, Component, VNode};
 
 use crate::{
     cell::Cell, collidable::Collidable, direction::Direction, food::Food, position::Position,
@@ -15,16 +15,12 @@ pub struct Game {
 }
 
 impl Component for Game {
-    fn render(&self) -> wasm_react::VNode {
+    fn render(&self) -> VNode {
         let width = self.size;
         let height = self.size;
 
         let rows = (0..height).map(|y| {
-            let columns = (0..width).map(move |x| {
-                h!(div)
-                    .class_name("cell")
-                    .build(c![self.get_cell((x, y)).unwrap().render()])
-            });
+            let columns = (0..width).map(move |x| self.get_cell((x, y)).unwrap().render());
 
             h!(div).class_name("row").build(c![..columns])
         });
@@ -87,7 +83,7 @@ impl Game {
 
     fn is_out_of_bounds(&self, position: Position) -> bool {
         let (x, y) = position;
-        x > self.size || y > self.size
+        x > (self.size - 1) || y > (self.size - 1)
     }
 
     fn get_available_positions(&self) -> Vec<Position> {
