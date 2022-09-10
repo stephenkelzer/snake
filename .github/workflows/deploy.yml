@@ -9,7 +9,7 @@ on:
       - published
 
 jobs:
-  build:
+  deploy-to-github-pages:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
