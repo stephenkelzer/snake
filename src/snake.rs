@@ -20,6 +20,14 @@ impl Snake {
         }
     }
 
+    pub fn body_length(&self) -> u32 {
+        if self.positions.is_empty() {
+            return 0;
+        }
+
+        (self.positions.len() - 1) as u32 // don't include the snake's head
+    }
+
     pub fn handle_key_press(&mut self, key_code: String) {
         let requested_direction = match &key_code[..] {
             "ArrowUp" | "KeyW" => Some(Direction::Up),

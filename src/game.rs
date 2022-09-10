@@ -2,8 +2,8 @@ use rand::Rng;
 use wasm_react::{c, h, Component, VNode};
 
 use crate::{
-    cell::Cell, collidable::Collidable, direction::Direction, food::Food, game_status::GameStatus,
-    position::Position, snake::Snake,
+    cell::Cell, collidable::Collidable, direction::Direction, food::Food, game_score::GameScore,
+    game_status::GameStatus, position::Position, snake::Snake,
 };
 
 #[derive(Debug)]
@@ -24,7 +24,8 @@ impl Component for Game {
 
         h!(div).id("game-wrapper").build(c![
             self.status.render(),
-            h!(div).id("game").build(c![..rows])
+            h!(div).id("game").build(c![..rows]),
+            GameScore::new(self.score()).render()
         ])
     }
 }
@@ -82,6 +83,10 @@ impl Game {
             return;
         }
         self.status = GameStatus::Playing;
+    }
+
+    fn score(&self) -> u32 {
+        self.snake.body_length()
     }
 
     fn get_cell(&self, position: Position) -> Option<Cell> {

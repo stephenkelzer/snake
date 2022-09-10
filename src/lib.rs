@@ -13,6 +13,7 @@ mod collidable;
 mod direction;
 mod food;
 mod game;
+mod game_score;
 mod game_status;
 mod position;
 mod snake;

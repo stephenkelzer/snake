@@ -17,11 +17,12 @@
             #app {
                 display: flex;
                 justify-content: center;
-                margin-top: 1rem;
                 outline: none;
             }
-
-            #game-wrapper {}
+            
+            #game-wrapper {
+                margin-top: 1rem;
+            }
 
             #game-status-wrapper {
                 text-align: center;
@@ -38,10 +39,16 @@
                 color: gray;
             }
 
+            #game-score {
+                font-size: 0.5rem;
+                padding-top: 0.2rem;
+                color: green;
+            }
+
             #game {
                 display: flex;
                 flex-direction: column;
-                border: 1px solid gray;
+                border: 0.1rem solid gray;
             }
 
             #game.paused {
