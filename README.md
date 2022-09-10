@@ -1,9 +1,14 @@
 # snake
 Welcome to my first app written in Rust!
 
-![image](https://user-images.githubusercontent.com/19741798/189489002-1454a5fe-91c5-497a-bf97-5c9979c4aa60.png)
-
-[GitHub Page Demo](https://stephenkelzer.github.io/snake)
+<a href="https://stephenkelzer.github.io/snake" target="_blank">
+   <p align="center">
+      <img src="https://user-images.githubusercontent.com/19741798/189489002-1454a5fe-91c5-497a-bf97-5c9979c4aa60.png">
+   </p>
+   <p align="center">
+      Play the latest version by clicking here!
+   </p>
+</a>
 
 ---
 
