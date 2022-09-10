@@ -93,7 +93,7 @@ impl Component for App {
                 let mut game = game.clone();
 
                 move |evt: KeyboardEvent| {
-                    let key_code = evt.code();
+                    let key_code = &evt.code()[..];
                     console::log_1(&format!("key pressed: {}", key_code).into());
 
                     game.set(|mut game| {

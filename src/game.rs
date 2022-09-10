@@ -40,14 +40,20 @@ impl Game {
         }
     }
 
-    pub fn handle_key_press(&mut self, key_code: String) {
-        // TODO: add space bar event to pause game
-
-        if self.status != GameStatus::Playing {
-            return;
+    pub fn handle_key_press(&mut self, key_code: &str) {
+        if key_code == "Space" {
+            match self.status {
+                GameStatus::Playing => self.pause(),
+                GameStatus::Paused => self.unpause(),
+                GameStatus::GameOver => {
+                    // todo!("start new game?")
+                }
+            }
         }
 
-        self.snake.handle_key_press(key_code)
+        if self.status == GameStatus::Playing {
+            self.snake.handle_key_press(key_code)
+        }
     }
 
     pub fn handle_tick(&mut self) {

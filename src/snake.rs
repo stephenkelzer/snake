@@ -28,8 +28,8 @@ impl Snake {
         (self.positions.len() - 1) as u32 // don't include the snake's head
     }
 
-    pub fn handle_key_press(&mut self, key_code: String) {
-        let requested_direction = match &key_code[..] {
+    pub fn handle_key_press(&mut self, key_code: &str) {
+        let requested_direction = match key_code {
             "ArrowUp" | "KeyW" => Some(Direction::Up),
             "ArrowRight" | "KeyD" => Some(Direction::Right),
             "ArrowDown" | "KeyS" => Some(Direction::Down),
@@ -108,7 +108,7 @@ mod tests {
     fn handle_key_press_arrow_up_goes_up() {
         let mut snake = Snake::new((3, 3), Direction::Left);
 
-        snake.handle_key_press(String::from("ArrowUp"));
+        snake.handle_key_press("ArrowUp");
 
         assert_eq!(snake.next_heading, Direction::Up);
     }
@@ -117,7 +117,7 @@ mod tests {
     fn handle_key_press_w_goes_up() {
         let mut snake = Snake::new((3, 3), Direction::Left);
 
-        snake.handle_key_press(String::from("W"));
+        snake.handle_key_press("W");
 
         assert_eq!(snake.next_heading, Direction::Up);
     }
@@ -126,7 +126,7 @@ mod tests {
     fn handle_key_press_arrow_down_goes_down() {
         let mut snake = Snake::new((3, 3), Direction::Left);
 
-        snake.handle_key_press(String::from("ArrowDown"));
+        snake.handle_key_press("ArrowDown");
 
         assert_eq!(snake.next_heading, Direction::Down);
     }
@@ -135,7 +135,7 @@ mod tests {
     fn handle_key_press_s_goes_down() {
         let mut snake = Snake::new((3, 3), Direction::Left);
 
-        snake.handle_key_press(String::from("S"));
+        snake.handle_key_press("S");
 
         assert_eq!(snake.next_heading, Direction::Down);
     }
@@ -144,7 +144,7 @@ mod tests {
     fn handle_key_press_arrow_right_does_nothing() {
         let mut snake = Snake::new((3, 3), Direction::Left);
 
-        snake.handle_key_press(String::from("ArrowRight"));
+        snake.handle_key_press("ArrowRight");
 
         assert_eq!(snake.next_heading, Direction::Left);
     }
@@ -153,7 +153,7 @@ mod tests {
     fn handle_key_press_d_does_nothing() {
         let mut snake = Snake::new((3, 3), Direction::Left);
 
-        snake.handle_key_press(String::from("D"));
+        snake.handle_key_press("D");
 
         assert_eq!(snake.next_heading, Direction::Left);
     }
