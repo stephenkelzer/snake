@@ -18,3 +18,7 @@ web-sys = { version = "0.3.59", features = [
     "Window",
     "HtmlElement",
 ] }
+
+[package.metadata.commands]
+prerun = "wasm-pack build --target web"
+run = "sfz -r"

@@ -1,14 +1,25 @@
 # snake
-My first app in Rust!
+Welcome to my first app written in Rust!
 
-## Pre-requisites
-1) [Install `Rust`](https://www.rust-lang.org/tools/install)
-1) [Install `wasm-pack`](https://rustwasm.github.io/wasm-pack/installer/)
+## Prerequisites:
+- Install [`Rust`](https://www.rust-lang.org/tools/install)
+   ```
+   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   ```
+- Install [`wasm-pack`](https://rustwasm.github.io/wasm-pack/installer/) (WebAssembly packager)
+   ```
+   curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+   ```
+- Install [`cargo-cmd`](https://crates.io/crates/cargo-cmd) (cargo command runner)
+   ```
+   cargo install cargo-cmd
+   ```
+- Install [`sfz`](https://crates.io/crates/sfz) (static file server)
+   ```
+   cargo install sfz
+   ```
 
-## Steps to run locally
-1) ```bash
-   wasm-pack build --target web
-   ```
-1) ```bash
-   npx serve
-   ```
+## To run locally:
+```bash
+cargo cmd run
+```
