@@ -1,7 +1,5 @@
 use std::collections::VecDeque;
 
-use wasm_bindgen::UnwrapThrowExt;
-
 use crate::{collidable::Collidable, direction::Direction, position::Position};
 
 #[derive(Debug)]
