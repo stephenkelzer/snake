@@ -17,24 +17,14 @@ Welcome to my first app written in Rust!
    ```
    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
    ```
-- Install [`wasm-pack`](https://rustwasm.github.io/wasm-pack/installer/) (WebAssembly packager)
-   ```
-   curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-   ```
-- Install [`cargo-cmd`](https://crates.io/crates/cargo-cmd) (cargo command runner)
-   ```
-   cargo install cargo-cmd
-   ```
-- Install [`sfz`](https://crates.io/crates/sfz) (static file server)
-   ```
-   cargo install sfz
-   ```
+- Setup [Yew](https://yew.rs/)
+   - [Follow the instructions on this page](https://yew.rs/docs/getting-started/introduction)
 
 ---
 
 ## To run locally:
 ```bash
-cargo cmd run
+trunk serve
 ```
 
 ---
