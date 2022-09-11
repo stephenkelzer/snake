@@ -8,10 +8,10 @@ use crate::{
 
 #[derive(Debug)]
 pub struct Game {
-    pub size: usize,
-    pub snake: Snake,
-    pub food: Food,
-    pub status: GameStatus,
+    size: usize,
+    snake: Snake,
+    food: Food,
+    status: GameStatus,
 }
 
 impl Component for Game {
