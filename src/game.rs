@@ -1,12 +1,12 @@
 use rand::Rng;
-use wasm_react::{c, h, Component, VNode};
+use yew::{html, Component, Properties};
 
 use crate::{
-    cell::Cell, collidable::Collidable, direction::Direction, food::Food, game_score::GameScore,
-    game_status::GameStatus, position::Position, snake::Snake,
+    cell::Cell, direction::Direction, food::Food, game_status::GameStatus, position::Position,
+    snake::Snake,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Properties, PartialEq)]
 pub struct Game {
     size: usize,
     snake: Snake,
@@ -15,18 +15,17 @@ pub struct Game {
 }
 
 impl Component for Game {
-    fn render(&self) -> VNode {
-        let rows = (0..self.size).map(|y| {
-            let columns = (0..self.size).map(move |x| self.get_cell((x, y)).unwrap().render());
+    type Message = ();
 
-            h!(div).class_name("row").build(c![..columns])
-        });
+    type Properties = Game;
 
-        h!(div).id("game-wrapper").build(c![
-            self.status.render(),
-            h!(div).id("game").build(c![..rows]),
-            GameScore::new(self.score()).render()
-        ])
+    fn create(ctx: &yew::Context<Self>) -> Self {
+        Game::new(20)
+    }
+
+    fn view(&self, ctx: &yew::Context<Self>) -> yew::Html {
+        // TODO!
+        html!(<div>{ "GAME" }</div>)
     }
 }
 
