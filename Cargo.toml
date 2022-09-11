@@ -6,5 +6,7 @@ authors = ["Stephen Kelzer"]
 
 [dependencies]
 yew = "0.19.3"
-getrandom = { version = "0.2.7", features = ["js"] }
+getrandom = { version = "0.2.7", features = [
+    "js",
+] } # check if this is actually needed anymore with yew?
 rand = "0.8.5"
