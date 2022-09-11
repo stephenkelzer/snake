@@ -4,21 +4,7 @@ version = "0.0.0"            # this get's updated automatically by our deploymen
 edition = "2021"
 authors = ["Stephen Kelzer"]
 
-[lib]
-crate-type = ["cdylib", "rlib"]
-
 [dependencies]
+yew = "0.19.3"
 getrandom = { version = "0.2.7", features = ["js"] }
-js-sys = "0.3.51"
 rand = "0.8.5"
-wasm-bindgen = "0.2.82"
-wasm-react = "0.3.2"
-web-sys = { version = "0.3.59", features = [
-    "console",
-    "Window",
-    "HtmlElement",
-] }
-
-[package.metadata.commands]
-prerun = "wasm-pack build --target web"
-run = "sfz -r"
