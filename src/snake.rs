@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 
 use crate::{collidable::Collidable, direction::Direction, position::Position};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Snake {
     positions: VecDeque<Position>, // head is first item, tail is last item inside of vector
     heading: Direction,
@@ -60,7 +60,7 @@ impl Snake {
     pub fn get_next_position(&mut self) -> Position {
         self.heading = self.next_heading; //TODO: should this be here? or in the actual "commit movement" step?
 
-        let (x, y) = *self.positions.front().unwrap_throw();
+        let (x, y) = *self.positions.front().unwrap();
 
         match &self.heading {
             Direction::Up => (x, y - 1),

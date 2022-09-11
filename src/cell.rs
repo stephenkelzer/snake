@@ -1,6 +1,6 @@
-use wasm_react::{c, h, VNode};
+use yew::{html, Component, Properties};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Cell {
     SnakeHead,
     SnakeBody,
@@ -8,8 +8,20 @@ pub enum Cell {
     Empty,
 }
 
-impl Cell {
-    pub fn render(self) -> VNode {
+#[derive(Debug, Properties, PartialEq)]
+pub struct CellProps {
+    cell: Cell,
+}
+
+impl Component for Cell {
+    type Message = ();
+    type Properties = CellProps;
+
+    fn create(ctx: &yew::Context<Self>) -> Self {
+        ctx.props().cell
+    }
+
+    fn view(&self, _: &yew::Context<Self>) -> yew::Html {
         let cell_content = match self {
             Cell::SnakeHead => "❇️",
             Cell::SnakeBody => "🟩",
@@ -17,6 +29,10 @@ impl Cell {
             Cell::Empty => "",
         };
 
-        return h!(div).class_name("cell").build(c![cell_content]);
+        html!(
+            <div class={"cell"}>
+                { cell_content }
+            </div>
+        )
     }
 }

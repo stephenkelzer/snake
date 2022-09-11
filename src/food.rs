@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 
 use crate::{collidable::Collidable, position::Position};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Food {
     positions: VecDeque<Position>,
 }

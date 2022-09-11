@@ -2,8 +2,8 @@ use rand::Rng;
 use yew::{html, Component, Properties};
 
 use crate::{
-    cell::Cell, direction::Direction, food::Food, game_status::GameStatus, position::Position,
-    snake::Snake,
+    cell::Cell, collidable::Collidable, direction::Direction, food::Food, game_status::GameStatus,
+    position::Position, snake::Snake,
 };
 
 #[derive(Debug, Properties, PartialEq)]
@@ -17,9 +17,9 @@ pub struct Game {
 impl Component for Game {
     type Message = ();
 
-    type Properties = Game;
+    type Properties = ();
 
-    fn create(ctx: &yew::Context<Self>) -> Self {
+    fn create(_: &yew::Context<Self>) -> Self {
         Game::new(20)
     }
 

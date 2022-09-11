@@ -1,15 +1,25 @@
-use wasm_react::{c, h, Component};
+use yew::{html, Component, Properties};
 
-#[derive(Debug)]
+#[derive(Debug, Properties, PartialEq)]
 pub struct GameScore {
     score: u32,
 }
 
 impl Component for GameScore {
-    fn render(&self) -> wasm_react::VNode {
-        h!(div)
-            .id("game-score")
-            .build(c![format!("Score: {}", self.score)])
+    type Message = ();
+
+    type Properties = GameScore;
+
+    fn create(ctx: &yew::Context<Self>) -> Self {
+        GameScore::new(ctx.props().score)
+    }
+
+    fn view(&self, ctx: &yew::Context<Self>) -> yew::Html {
+        html!(
+            <div id={"game-score"}>
+                { format!("Score: {}", self.score) }
+            </div>
+        )
     }
 }
 

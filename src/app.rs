@@ -20,7 +20,7 @@ impl Component for App {
     fn view(&self, _: &yew::Context<Self>) -> yew::Html {
         html!(
             <div id={"id"} version={ self.version.clone() } tabindex={0}>
-                <Game size={20} />
+                <Game />
             </div>
         )
     }

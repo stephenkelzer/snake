@@ -1,4 +1,4 @@
-use wasm_react::{c, h, Component, VNode};
+use yew::{html, Component};
 
 #[derive(Debug, PartialEq)]
 pub enum GameStatus {
@@ -8,7 +8,19 @@ pub enum GameStatus {
 }
 
 impl Component for GameStatus {
-    fn render(&self) -> VNode {
+    type Message = ();
+    type Properties = ();
+
+    fn create(ctx: &yew::Context<Self>) -> Self {
+        GameStatus::Paused
+    }
+
+    // lets leave this commented out to see what happens
+    // fn update(&mut self, ctx: &yew::Context<Self>, msg: Self::Message) -> bool {
+    //     false
+    // }
+
+    fn view(&self, ctx: &yew::Context<Self>) -> yew::Html {
         let (title, subtitle) = match self {
             GameStatus::Playing => (
                 "Playing",
@@ -21,9 +33,11 @@ impl Component for GameStatus {
             GameStatus::GameOver => ("Game Over!", "Refresh your browser to play again."),
         };
 
-        h!(div).id("game-status-wrapper").build(c![
-            h!(div).id("game-status-title").build(c![title]),
-            h!(div).id("game-status-subtitle").build(c![subtitle])
-        ])
+        html!(
+            <div id={"game-status-wrapper"}>
+                <div id={"game-status-title"}>{ title }</div>
+                <div id={"game-status-subtitle"}>{ subtitle }</div>
+            </div>
+        )
     }
 }
