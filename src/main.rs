@@ -1,16 +1,4 @@
-use app::App;
-
-mod app;
-mod cell;
-mod collidable;
-mod direction;
-mod food;
-mod game;
-mod game_score;
-mod game_status;
-mod position;
-mod snake;
-
 fn main() {
-    yew::start_app::<App>();
+    let app_version = env!("CARGO_PKG_VERSION").to_string();
+    ui::run(app_version);
 }

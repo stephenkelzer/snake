@@ -1,30 +1,49 @@
-use yew::{html, Component};
+use yew::{function_component, html, Properties};
 
-use crate::game::Game;
+use crate::components::*;
 
-pub struct App {
-    version: String,
+#[derive(Properties, PartialEq)]
+pub struct AppProps {
+    pub version: String,
 }
 
-impl Component for App {
-    type Message = ();
-
-    type Properties = ();
-
-    fn create(_: &yew::Context<Self>) -> Self {
-        Self {
-            version: env!("CARGO_PKG_VERSION").to_string(),
-        }
-    }
-
-    fn view(&self, _: &yew::Context<Self>) -> yew::Html {
-        html!(
-            <div id={"id"} version={ self.version.clone() } tabindex={0}>
-                <Game />
-            </div>
-        )
+#[function_component(App)]
+pub fn app(props: &AppProps) -> Html {
+    html! {
+        <div id={"app"} version={ props.version.clone() } tabindex={0}>
+            <game::Game />
+        </div>
     }
 }
+
+// pub struct App {
+//     version: String,
+// }
+
+// #[derive(Debug, Properties, PartialEq)]
+// pub struct Props {
+//     pub version: String,
+// }
+
+// impl Component for App {
+//     type Message = ();
+
+//     type Properties = Props;
+
+//     fn create(_: &yew::Context<Self>) -> Self {
+//         Self {
+//             version: env!("CARGO_PKG_VERSION").to_string(),
+//         }
+//     }
+
+//     fn view(&self, _: &yew::Context<Self>) -> yew::Html {
+//         html!(
+//             <div id={"id"} version={ self.version.clone() } tabindex={0}>
+//                 <game::Game size={20} />
+//             </div>
+//         )
+//     }
+// }
 
 // fn render(&self) -> wasm_react::VNode {
 //     let game = use_state(|| Game::new(10));

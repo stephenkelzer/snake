@@ -1,36 +1,24 @@
+use std::collections::HashMap;
+
 use rand::Rng;
-use yew::{html, Component, Properties};
 
 use crate::{
     cell::Cell, collidable::Collidable, direction::Direction, food::Food, game_status::GameStatus,
     position::Position, snake::Snake,
 };
 
-#[derive(Debug, Properties, PartialEq)]
+#[derive(Debug)]
 pub struct Game {
+    pub status: GameStatus,
     size: usize,
     snake: Snake,
     food: Food,
-    status: GameStatus,
-}
-
-impl Component for Game {
-    type Message = ();
-
-    type Properties = ();
-
-    fn create(_: &yew::Context<Self>) -> Self {
-        Game::new(20)
-    }
-
-    fn view(&self, ctx: &yew::Context<Self>) -> yew::Html {
-        // TODO!
-        html!(<div>{ "GAME" }</div>)
-    }
 }
 
 impl Game {
-    pub fn new(size: usize) -> Self {
+    pub fn new() -> Self {
+        let size = 10;
+
         Self {
             size,
             snake: Snake::new(((size - 3).max(0), size / 2), Direction::Left),
@@ -90,21 +78,24 @@ impl Game {
         self.status = GameStatus::Playing;
     }
 
-    fn score(&self) -> u32 {
-        self.snake.body_length()
+    pub fn get_all_positioned_cells(&self) -> Vec<(Position, Cell)> {
+        (0..self.size)
+            .flat_map(|y| (0..self.size).map(move |x| (x, y)))
+            .map(|position| {
+                let cell = match position {
+                    (x, y) if self.snake.is_head_position((x, y)) => Cell::SnakeHead,
+                    (x, y) if self.snake.check_for_collision(&(x, y)) => Cell::SnakeBody,
+                    (x, y) if self.food.check_for_collision(&(x, y)) => Cell::Food,
+                    _ => Cell::Empty,
+                };
+
+                (position, cell)
+            })
+            .collect()
     }
 
-    fn get_cell(&self, position: Position) -> Option<Cell> {
-        if self.is_out_of_bounds(position) {
-            return None;
-        }
-
-        Some(match position {
-            (x, y) if self.snake.is_head_position((x, y)) => Cell::SnakeHead,
-            (x, y) if self.snake.check_for_collision(&(x, y)) => Cell::SnakeBody,
-            (x, y) if self.food.check_for_collision(&(x, y)) => Cell::Food,
-            _ => Cell::Empty,
-        })
+    pub fn score(&self) -> u32 {
+        self.snake.body_length()
     }
 
     fn is_out_of_bounds(&self, position: Position) -> bool {
@@ -112,17 +103,14 @@ impl Game {
         x > (self.size - 1) || y > (self.size - 1)
     }
 
-    fn get_available_positions(&self) -> Vec<Position> {
-        (0..self.size)
-            .flat_map(|y| (0..self.size).map(move |x| (x, y)))
-            .filter(|pos| {
-                !self.snake.check_for_collision(&pos) && !self.food.check_for_collision(&pos)
-            })
-            .collect::<Vec<Position>>()
-    }
-
     fn get_random_available_position(&self) -> Position {
-        let available_positions = self.get_available_positions();
+        let available_positions: Vec<Position> = self
+            .get_all_positioned_cells()
+            .into_iter()
+            .filter(|(_, cell)| cell == &Cell::Empty)
+            .map(|(position, _)| position)
+            .collect();
+
         available_positions[rand::thread_rng().gen_range(0..(available_positions.len() + 1))]
     }
 }
