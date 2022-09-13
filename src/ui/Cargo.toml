@@ -1,8 +1,12 @@
 [package]
-name = "snake"
+name = "ui"
 version = "0.0.0"            # this get's updated automatically by our deployment GitHub Action
 edition = "2021"
 authors = ["Stephen Kelzer"]
 
 [dependencies]
-ui = { path = "./src/ui" }
+yew = "0.19.3"
+gloo = "0.8.0"
+game = { path = "../../src/game" }
+itertools = "0.10.3"
+wasm-bindgen = "0.2.82"

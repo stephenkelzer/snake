@@ -1,16 +1,14 @@
-use std::collections::VecDeque;
-
 use crate::{collidable::Collidable, position::Position};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Food {
-    positions: VecDeque<Position>,
+    positions: Vec<Position>,
 }
 
 impl Food {
     pub fn new(position: Position) -> Self {
         Self {
-            positions: [position].into_iter().collect(),
+            positions: [position].to_vec(),
         }
     }
 }

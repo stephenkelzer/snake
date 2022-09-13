@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐍</text></svg>">
+  <head>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐍</text></svg>">
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <title>Snake</title>
@@ -66,20 +66,6 @@
                 justify-content: center;
             }
         </style>
-    </head>
-    <body>
-        <div id="root"></div>
-
-        <script type="module">
-            import "https://unpkg.com/react/umd/react.production.min.js";
-            import "https://unpkg.com/react-dom/umd/react-dom.production.min.js";
-            import init, { WasmReact, App } from "./pkg/snake.js";
-
-            await init(); // Need to load WASM first
-            WasmReact.useReact(window.React); // Tell wasm-react to use your React runtime
-
-            const root = ReactDOM.createRoot(document.getElementById("root"));
-            root.render(React.createElement(App, {}));
-        </script>
-    </body>
+  </head>
+  { Yew automatically injects the apps content here during compilation }
 </html>

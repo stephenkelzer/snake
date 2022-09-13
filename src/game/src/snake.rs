@@ -1,10 +1,8 @@
 use std::collections::VecDeque;
 
-use wasm_bindgen::UnwrapThrowExt;
-
 use crate::{collidable::Collidable, direction::Direction, position::Position};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Snake {
     positions: VecDeque<Position>, // head is first item, tail is last item inside of vector
     heading: Direction,
@@ -28,8 +26,8 @@ impl Snake {
         (self.positions.len() - 1) as u32 // don't include the snake's head
     }
 
-    pub fn handle_key_press(&mut self, key_code: &str) {
-        let requested_direction = match key_code {
+    pub fn handle_key_press(&mut self, key_code: String) {
+        let requested_direction = match key_code.as_str() {
             "ArrowUp" | "KeyW" => Some(Direction::Up),
             "ArrowRight" | "KeyD" => Some(Direction::Right),
             "ArrowDown" | "KeyS" => Some(Direction::Down),
@@ -62,13 +60,13 @@ impl Snake {
     pub fn get_next_position(&mut self) -> Position {
         self.heading = self.next_heading; //TODO: should this be here? or in the actual "commit movement" step?
 
-        let (x, y) = *self.positions.front().unwrap_throw();
+        let head = self.positions.front().unwrap();
 
         match &self.heading {
-            Direction::Up => (x, y - 1),
-            Direction::Right => (x + 1, y),
-            Direction::Down => (x, y + 1),
-            Direction::Left => (x - 1, y),
+            Direction::Up => Position::xy(head.column, head.row - 1),
+            Direction::Right => Position::xy(head.column + 1, head.row),
+            Direction::Down => Position::xy(head.column, head.row + 1),
+            Direction::Left => Position::xy(head.column - 1, head.row),
         }
     }
 
@@ -169,7 +167,7 @@ mod tests {
 
     fn test_helper(
         starting_direction: Direction,
-        test_keys: Vec<&str>,
+        test_keys: Vec<String>,
         expected_direction: Direction,
     ) {
         for test_key in test_keys {
