@@ -24,18 +24,17 @@ jobs:
 
     steps:
 
-      - name: Install wasm-pack
-        uses: jetli/wasm-pack-action@v0.3.0
+      - uses: jetli/trunk-action@v0.1.0
         with:
           version: 'latest'
-            
+           
       - uses: actions/checkout@v3
 
+      - name: Lint
+        run: cargo check
+
       - name: Build
-        run: cargo build --verbose
+        run: trunk build --release
         
       - name: Run tests
         run: cargo test --verbose
-
-      - name: Compile WebAssembly Package
-        run: wasm-pack build --target web
