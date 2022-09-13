@@ -4,3 +4,4 @@ mod board;
 mod cell;
 mod footer;
 mod header;
+mod row;

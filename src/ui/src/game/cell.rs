@@ -4,13 +4,13 @@ use game::element::Element;
 use game::position::Position as LogicalPosition;
 
 #[derive(Properties, PartialEq)]
-pub struct CellProps {
+pub struct Props {
     pub position: LogicalPosition,
     pub element: Option<Element>,
 }
 
 #[function_component(Cell)]
-pub fn cell(props: &CellProps) -> Html {
+pub fn cell(props: &Props) -> Html {
     let cell_content = match props.element {
         Some(Element::SnakeHead) => "❇️",
         Some(Element::SnakeBody) => "🟩",
