@@ -30,7 +30,10 @@ impl Game {
             match self.status {
                 GameStatus::Playing => self.pause(),
                 GameStatus::Paused => self.unpause(),
-                _ => {}
+                GameStatus::GameOver => {
+                    *self = Game::new();
+                    return;
+                }
             }
         }
 
