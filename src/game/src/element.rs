@@ -1,7 +1,6 @@
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub enum Cell {
+pub enum Element {
     SnakeHead,
     SnakeBody,
     Food,
-    Empty,
 }

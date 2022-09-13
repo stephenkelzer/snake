@@ -1,21 +1,21 @@
 use yew::{function_component, html, Properties};
 
-use game::cell::Cell as LogicalCell;
+use game::element::Element;
 use game::position::Position as LogicalPosition;
 
 #[derive(Properties, PartialEq)]
 pub struct CellProps {
     pub position: LogicalPosition,
-    pub cell: LogicalCell,
+    pub element: Option<Element>,
 }
 
 #[function_component(Cell)]
 pub fn cell(props: &CellProps) -> Html {
-    let cell_content = match props.cell {
-        LogicalCell::SnakeHead => "❇️",
-        LogicalCell::SnakeBody => "🟩",
-        LogicalCell::Food => "🍎",
-        LogicalCell::Empty => "",
+    let cell_content = match props.element {
+        Some(Element::SnakeHead) => "❇️",
+        Some(Element::SnakeBody) => "🟩",
+        Some(Element::Food) => "🍎",
+        None => "",
     };
 
     html! {

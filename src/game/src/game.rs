@@ -1,8 +1,8 @@
 use rand::Rng;
 
 use crate::{
-    cell::Cell, collidable::Collidable, direction::Direction, food::Food, game_status::GameStatus,
-    position::Position, snake::Snake,
+    collidable::Collidable, direction::Direction, element::Element, food::Food,
+    game_status::GameStatus, position::Position, snake::Snake,
 };
 
 #[derive(Debug, PartialEq)]
@@ -77,21 +77,27 @@ impl Game {
         self.status = GameStatus::Playing;
     }
 
-    pub fn get_table_layout(&self) -> Vec<(usize, Vec<(Position, Cell)>)> {
-        let mut rows: Vec<(usize, Vec<(Position, Cell)>)> = vec![];
+    pub fn get_table_layout(&self) -> Vec<(usize, Vec<(Position, Option<Element>)>)> {
+        let mut rows = vec![];
 
         for row in 0..self.size {
-            let mut columns: Vec<(Position, Cell)> = vec![];
+            let mut columns = vec![];
+
             for column in 0..self.size {
                 let position = Position { row, column };
-                let cell = match position {
-                    position if self.snake.is_head_position(position) => Cell::SnakeHead,
-                    position if self.snake.check_for_collision(&position) => Cell::SnakeBody,
-                    position if self.food.check_for_collision(&position) => Cell::Food,
-                    _ => Cell::Empty,
+
+                let element = match position {
+                    position if self.snake.is_head_position(position) => Some(Element::SnakeHead),
+                    position if self.snake.check_for_collision(&position) => {
+                        Some(Element::SnakeBody)
+                    }
+                    position if self.food.check_for_collision(&position) => Some(Element::Food),
+                    _ => None,
                 };
-                columns.push((position, cell));
+
+                columns.push((position, element));
             }
+
             rows.push((row, columns));
         }
 
@@ -123,7 +129,7 @@ impl Game {
             .get_table_layout()
             .into_iter()
             .flat_map(|(_, columns)| columns)
-            .filter(|(_, cell)| cell == &Cell::Empty)
+            .filter(|(_, element)| element.is_none())
             .map(|(position, _)| position)
             .collect();
 

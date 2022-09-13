@@ -1,8 +1,9 @@
-pub mod cell;
+pub mod element;
+pub mod game;
+pub mod position;
+
 mod collidable;
 mod direction;
 mod food;
-pub mod game;
 mod game_status;
-pub mod position;
 mod snake;
