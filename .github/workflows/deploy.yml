@@ -46,7 +46,7 @@ jobs:
           value: ${{ github.ref_name }}
 
       - name: Build
-        run: trunk build --release
+        run: trunk build --release --public-url="snake" # Needed for GitHub Pages to work
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v2
