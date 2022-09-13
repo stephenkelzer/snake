@@ -26,8 +26,8 @@ impl Snake {
         (self.positions.len() - 1) as u32 // don't include the snake's head
     }
 
-    pub fn handle_key_press(&mut self, key_code: &str) {
-        let requested_direction = match key_code {
+    pub fn handle_key_press(&mut self, key_code: String) {
+        let requested_direction = match key_code.as_str() {
             "ArrowUp" | "KeyW" => Some(Direction::Up),
             "ArrowRight" | "KeyD" => Some(Direction::Right),
             "ArrowDown" | "KeyS" => Some(Direction::Down),
@@ -167,7 +167,7 @@ mod tests {
 
     fn test_helper(
         starting_direction: Direction,
-        test_keys: Vec<&str>,
+        test_keys: Vec<String>,
         expected_direction: Direction,
     ) {
         for test_key in test_keys {

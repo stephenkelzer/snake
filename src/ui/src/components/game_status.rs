@@ -17,26 +17,13 @@ pub fn gameStatus(props: &GameStatusProps) -> Html {
         subtitle = "Use the arrow keys (or 'WASD') to move the snake.".to_string();
     } else if props.is_paused {
         title = "Paused".to_string();
-        subtitle = "Click on the game area or press 'space' to resume.".to_string();
+        subtitle = "Press 'space' to resume.".to_string();
     } else if props.is_game_over {
         title = "Game Over!".to_string();
         subtitle = "Refresh your browser to play again.".to_string();
     } else {
         panic!("Unknown game state")
     }
-
-    // let (title, subtitle) = match props.game {
-    //     game if game.isPlaying() => (
-    //         "Playing",
-    //         "Use the arrow keys (or 'WASD') to move the snake.",
-    //     ),
-    //     game if game.isPaused() => (
-    //         "Paused",
-    //         "Click on the game area or press 'space' to resume",
-    //     ),
-    //     game if game.isGameOver() => ("Game Over!", "Refresh your browser to play again."),
-    //     _ => panic!("Unknown game state"),
-    // };
 
     html!(
         <div id={"game-status-wrapper"}>

@@ -587,6 +587,7 @@ dependencies = [
  "game",
  "gloo 0.8.0",
  "itertools",
+ "wasm-bindgen",
  "yew",
 ]
 

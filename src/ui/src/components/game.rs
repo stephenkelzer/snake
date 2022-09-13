@@ -1,5 +1,9 @@
+use gloo::events::EventListener;
+use gloo::utils::document;
 use gloo::{console::log, timers::callback::Interval};
-use yew::{html, Component, Context, Html};
+use wasm_bindgen::JsCast;
+use yew::html::onkeydown::Event;
+use yew::{html, Component, Context, Html, KeyboardEvent};
 
 use crate::components::cell::Cell as CellComponent;
 use crate::components::game_score::GameScore as GameScoreComponent;
@@ -11,10 +15,12 @@ use game::game::Game as GameEngine;
 pub struct Game {
     game: GameEngine,
     _interval: Interval,
+    _key_down_listener: EventListener,
 }
 
 pub enum Msg {
     Tick,
+    KeyDownEvent(KeyboardEvent),
 }
 
 impl Component for Game {
@@ -25,12 +31,18 @@ impl Component for Game {
     fn create(ctx: &yew::Context<Self>) -> Self {
         log!("Creating game");
 
-        let callback = ctx.link().callback(|_| Msg::Tick);
-        let interval = Interval::new(200, move || callback.emit(()));
+        let tick_callback = ctx.link().callback(|_| Msg::Tick);
+        let interval = Interval::new(200, move || tick_callback.emit(()));
+
+        let key_down_callback = ctx.link().callback(|e: Event| Msg::KeyDownEvent(e));
+        let key_down_listener = EventListener::new(&document(), "keydown", move |e| {
+            key_down_callback.emit(e.clone().unchecked_into::<KeyboardEvent>())
+        });
 
         Self {
             game: game::game::Game::new(),
             _interval: interval,
+            _key_down_listener: key_down_listener,
         }
     }
 
@@ -40,8 +52,11 @@ impl Component for Game {
             Msg::Tick => {
                 if !self.game.is_game_over() {
                     self.game.handle_tick();
-                    // return true;
+                    return true;
                 }
+            }
+            Msg::KeyDownEvent(keyboard_event) => {
+                self.game.handle_key_press(keyboard_event.code());
             }
         }
 

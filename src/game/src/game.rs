@@ -25,14 +25,12 @@ impl Game {
         }
     }
 
-    pub fn handle_key_press(&mut self, key_code: &str) {
+    pub fn handle_key_press(&mut self, key_code: String) {
         if key_code == "Space" {
             match self.status {
                 GameStatus::Playing => self.pause(),
                 GameStatus::Paused => self.unpause(),
-                GameStatus::GameOver => {
-                    // todo!("start new game?")
-                }
+                _ => {}
             }
         }
 
