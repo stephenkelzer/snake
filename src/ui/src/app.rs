@@ -1,6 +1,6 @@
 use yew::{function_component, html, Properties};
 
-use crate::components::*;
+use crate::components::game::Game;
 
 #[derive(Properties, PartialEq)]
 pub struct AppProps {
@@ -11,7 +11,7 @@ pub struct AppProps {
 pub fn app(props: &AppProps) -> Html {
     html! {
         <div id={"app"} version={ props.version.clone() } tabindex={0}>
-            <game::Game />
+            <Game />
         </div>
     }
 }

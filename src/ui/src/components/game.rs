@@ -1,12 +1,11 @@
-use std::collections::HashMap;
-
 use gloo::{console::log, timers::callback::Interval};
 use yew::{html, Component, Context, Html};
 
 use crate::components::cell::Cell as CellComponent;
 use crate::components::game_score::GameScore as GameScoreComponent;
 use crate::components::game_status::GameStatus as GameStatusComponent;
-use game::{cell::Cell, game::Game as GameEngine, game_status::GameStatus};
+
+use game::game::Game as GameEngine;
 
 #[derive(Debug)]
 pub struct Game {
@@ -36,41 +35,35 @@ impl Component for Game {
     }
 
     fn update(&mut self, _: &Context<Self>, msg: Self::Message) -> bool {
-        // log!("Updating game");
-        // match msg {
-        //     Msg::Tick => {
-        //         if self.game.status != GameStatus::GameOver {
-        //             self.game.handle_tick();
-        //             return true;
-        //         }
-        //     }
-        // }
+        log!("Updating game");
+        match msg {
+            Msg::Tick => {
+                if !self.game.is_game_over() {
+                    self.game.handle_tick();
+                    // return true;
+                }
+            }
+        }
 
         false
     }
 
     fn view(&self, _: &yew::Context<Self>) -> yew::Html {
-        let mut rows: HashMap<usize, Vec<(usize, Cell)>> = HashMap::new();
+        log!("Rending Game...");
 
-        self.game
-            .get_all_positioned_cells()
-            .into_iter()
-            .for_each(|((_, y), cell)| {
-                let row = rows.entry(y).or_insert(vec![]);
-                row.push((y, cell));
-            });
+        let rows = self.game.get_table_layout();
 
         html!(
             <div id={"game-wrapper"}>
-                <GameStatusComponent status={self.game.status} />
+                <GameStatusComponent is_playing={self.game.is_playing()} is_paused={self.game.is_paused()} is_game_over={self.game.is_game_over()} />
                 <div id={"game"}>
                     {
-                        rows.into_iter().map(|(_, columns)| {
+                        rows.into_iter().map(|(row, columns)| {
                             html! {
-                                <div class={"row"}>
-                                    {
-                                        columns.into_iter().map(|(column, cell)| {
-                                            html!{<CellComponent key={column} cell={cell} />}
+                                <div key={row} class={"row"} row-index={row.to_string()}>
+                                {
+                                    columns.into_iter().map(|(position, cell)| {
+                                            html!{<CellComponent key={position.column} cell={cell} position={position} />}
                                         }).collect::<Html>()
                                     }
                                 </div>

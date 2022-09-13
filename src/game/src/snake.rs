@@ -60,13 +60,13 @@ impl Snake {
     pub fn get_next_position(&mut self) -> Position {
         self.heading = self.next_heading; //TODO: should this be here? or in the actual "commit movement" step?
 
-        let (x, y) = *self.positions.front().unwrap();
+        let head = self.positions.front().unwrap();
 
         match &self.heading {
-            Direction::Up => (x, y - 1),
-            Direction::Right => (x + 1, y),
-            Direction::Down => (x, y + 1),
-            Direction::Left => (x - 1, y),
+            Direction::Up => Position::xy(head.column, head.row - 1),
+            Direction::Right => Position::xy(head.column + 1, head.row),
+            Direction::Down => Position::xy(head.column, head.row + 1),
+            Direction::Left => Position::xy(head.column - 1, head.row),
         }
     }
 

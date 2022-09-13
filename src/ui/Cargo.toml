@@ -8,3 +8,4 @@ authors = ["Stephen Kelzer"]
 yew = "0.19.3"
 gloo = "0.8.0"
 game = { path = "../../src/game" }
+itertools = "0.10.3"
