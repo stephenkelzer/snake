@@ -6,6 +6,9 @@ on:
     branches: 
       - "*"
 
+env:
+  REPOSITORY_NAME: ${{ github.event.repository.name }}
+
 jobs:
 
   test:
@@ -20,8 +23,8 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
 
       - name: Test 2
-        run: echo "$GITHUB_CONTEXT"
-        env:
-          GITHUB_CONTEXT: ${{ github.event.repository.name }}
+        run: echo "$REPOSITORY_NAME"
 
+      - name: Test 3
+        run: echo "${{ REPOSITORY_NAME }}"
 
