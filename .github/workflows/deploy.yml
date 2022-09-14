@@ -9,6 +9,8 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  REPOSITORY_NAME: ${{ github.event.repository.name }}
+  BUILD_DIR: dist
 
 permissions:
   contents: read
@@ -46,7 +48,10 @@ jobs:
           value: ${{ github.ref_name }}
 
       - name: Build
-        run: trunk build --release --public-url="snake" # Needed for GitHub Pages to work
+        run: trunk build --release --public-url="$REPOSITORY_NAME"
+
+      - name: Add GitHub Pages 404 Page
+        run: echo '<script>window.location.href="/$REPOSITORY_NAME";</script>' > $BUILD_DIR/404.html
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v2
@@ -54,7 +59,7 @@ jobs:
       - name: Upload GitHub Pages Artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: 'dist'
+          path: ${{ env.BUILD_DIR }}
   
   deploy-to-github-pages:
 
