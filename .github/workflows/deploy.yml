@@ -11,6 +11,7 @@ env:
   CARGO_TERM_COLOR: always
   REPOSITORY_NAME: ${{ github.event.repository.name }}
   BUILD_DIR: dist
+  APP_VERSION: ${{ github.ref_name }}
 
 permissions:
   contents: read
@@ -45,13 +46,13 @@ jobs:
         with:
           file: "Cargo.toml"
           key: "package.version"
-          value: ${{ github.ref_name }}
+          value: ${{ env.APP_VERSION }}
 
       - name: Build
-        run: trunk build --release --public-url="$REPOSITORY_NAME"
+        run: trunk build --release --public-url="${{ env.REPOSITORY_NAME }}"
 
       - name: Add GitHub Pages 404 Page
-        run: echo '<script>window.location.href="/$REPOSITORY_NAME";</script>' > $BUILD_DIR/404.html
+        run: echo '<script>window.location.href="/${{ env.REPOSITORY_NAME }}";</script>' > ${{ env.BUILD_DIR }}/404.html
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v2
