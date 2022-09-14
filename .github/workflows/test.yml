@@ -1,0 +1,22 @@
+name: Build and Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: 
+      - "*"
+
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Test
+        run: echo "$GITHUB_CONTEXT"
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+
+
