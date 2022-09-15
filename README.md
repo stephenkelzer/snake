@@ -17,8 +17,14 @@ Welcome to my first app written in Rust!
    ```
    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
    ```
-- Setup [Yew](https://yew.rs/)
-   - [Follow the instructions on this page](https://yew.rs/docs/getting-started/introduction)
+- Install WebAssembly Target
+   ```
+   rustup target add wasm32-unknown-unknown
+   ```
+- Install [Trunk](https://trunkrs.dev/)
+   ```
+   cargo install trunk
+   ```
 
 ---
 
