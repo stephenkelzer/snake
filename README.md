@@ -1,6 +1,8 @@
 # snake
 Welcome to my first app written in Rust!
 
+[![Build and Test](https://github.com/stephenkelzer/snake/actions/workflows/build_and_test.yml/badge.svg?branch=main)](https://github.com/stephenkelzer/snake/actions/workflows/build_and_test.yml)
+
 <a href="https://stephenkelzer.github.io/snake" target="_blank">
    <p align="center">
       <img src="https://user-images.githubusercontent.com/19741798/189489002-1454a5fe-91c5-497a-bf97-5c9979c4aa60.png">
