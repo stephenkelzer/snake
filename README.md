@@ -4,6 +4,7 @@ Welcome to my first app written in Rust!
 [![GitHub Pages](https://img.shields.io/website-up-down-green-red/https/stephenkelzer.github.io/snake.svg)](https://stephenkelzer.github.io/snake)
 [![Build and Test](https://github.com/stephenkelzer/snake/actions/workflows/build_and_test.yml/badge.svg?branch=main)](https://github.com/stephenkelzer/snake/actions/workflows/build_and_test.yml)
 [![GitHub Issues](https://img.shields.io/github/issues/stephenkelzer/snake.svg)](https://GitHub.com/stephenkelzer/snake/issues/)
+[![GitHub pull-requests](https://img.shields.io/github/issues-pr/stephenkelzer/snake.svg)](https://GitHub.com/stephenkelzer/snake/pull/)
 
 <a href="https://stephenkelzer.github.io/snake" target="_blank">
    <p align="center">
