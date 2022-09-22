@@ -1,7 +1,9 @@
 # snake
 Welcome to my first app written in Rust!
 
-[![Build and Test](https://github.com/stephenkelzer/snake/actions/workflows/build_and_test.yml/badge.svg?branch=main)](https://github.com/stephenkelzer/snake/actions/workflows/build_and_test.yml) [![GitHub Pages](https://img.shields.io/website-up-down-green-red/https/stephenkelzer.github.io/snake.svg)](https://stephenkelzer.github.io/snake)
+[![GitHub Pages](https://img.shields.io/website-up-down-green-red/https/stephenkelzer.github.io/snake.svg)](https://stephenkelzer.github.io/snake)
+[![Build and Test](https://github.com/stephenkelzer/snake/actions/workflows/build_and_test.yml/badge.svg?branch=main)](https://github.com/stephenkelzer/snake/actions/workflows/build_and_test.yml)
+[![GitHub Issues](https://img.shields.io/github/issues/stephenkelzer/snake.svg)](https://GitHub.com/stephenkelzer/snake/issues/)
 
 <a href="https://stephenkelzer.github.io/snake" target="_blank">
    <p align="center">
